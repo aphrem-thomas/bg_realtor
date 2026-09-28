@@ -155,7 +155,7 @@ Any Node host that supports Next.js works. Vercel is the simplest.
 
 1. Create a managed Postgres database, then run `DATABASE_URL=… npm run db:migrate` once.
 2. Set the environment variables in your host's dashboard:
-   - Required: `NEXT_PUBLIC_SITE_URL` (your https domain), `DDF_CLIENT_ID`, `DDF_CLIENT_SECRET`, `DATABASE_URL`
+   - Required: `NEXT_PUBLIC_SITE_URL` (your https domain; if left empty, Vercel's production domain is used, so canonical URLs and the sitemap still work), `DDF_CLIENT_ID`, `DDF_CLIENT_SECRET`, `DATABASE_URL`
    - Recommended: `DDF_DESTINATION_ID`, `EMAIL_PROVIDER=resend`, `EMAIL_API_KEY`, `EMAIL_FROM` (a verified sender domain), `LEAD_NOTIFICATION_EMAIL`
 3. Deploy. `robots.txt` blocks crawlers on non-production Vercel deployments automatically.
 4. Submit `https://yourdomain/sitemap.xml` to Google Search Console.

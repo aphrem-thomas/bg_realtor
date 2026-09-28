@@ -6,7 +6,33 @@
  * server-only.
  */
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+/**
+ * Canonical site URL. Resolution order:
+ *   1. NEXT_PUBLIC_SITE_URL (set this to your production domain)
+ *   2. Vercel's production domain, then the deployment URL (set automatically on Vercel)
+ *   3. http://localhost:3000
+ * Empty values are ignored and a missing protocol defaults to https://, so a
+ * blank or partial env var can't break the build.
+ */
+function resolveSiteUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.VERCEL_ENV === "production" ? process.env.VERCEL_PROJECT_PRODUCTION_URL : undefined,
+    process.env.VERCEL_URL,
+  ];
+  for (const raw of candidates) {
+    const value = raw?.trim();
+    if (!value) continue;
+    try {
+      return new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`).origin;
+    } catch {
+      // Ignore malformed values and try the next candidate.
+    }
+  }
+  return "http://localhost:3000";
+}
+
+const siteUrl = resolveSiteUrl();
 
 export const siteConfig = {
   /** Brand / business name shown in the header, titles and structured data. */
