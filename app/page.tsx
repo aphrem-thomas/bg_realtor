@@ -1,69 +1,65 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Suspense } from "react";
+import { ArrowRight } from "lucide-react";
+import { realtor } from "@/config/realtor";
+import { siteConfig } from "@/config/site";
+import { BuySellCTA } from "@/components/home/BuySellCTA";
+import { EligibilityCTA } from "@/components/home/EligibilityCTA";
+import { FeaturedProperties } from "@/components/home/FeaturedProperties";
+import { Hero } from "@/components/home/Hero";
+import { WhyUs } from "@/components/home/WhyUs";
+import { RealtorProfile } from "@/components/realtor/RealtorProfile";
+import { Testimonials } from "@/components/realtor/Testimonials";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { PropertyGridSkeleton } from "@/components/ui/Skeleton";
+import { realEstateAgentJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
 
-export default function Home() {
+// Featured listings are refreshed at most every 5 minutes.
+export const revalidate = 300;
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <JsonLd data={[websiteJsonLd(), realEstateAgentJsonLd()]} />
+      <Hero />
+
+      <section aria-labelledby="featured-heading" className="container-page mt-24 sm:mt-28">
+        <SectionHeading
+          eyebrow="Featured properties"
+          title={<span id="featured-heading">Latest homes in your area</span>}
+          description="Hand-picked from the newest listings on the market, updated throughout the day."
+          action={
+            <Link href="/properties" className="btn-secondary">
+              View all properties <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          }
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <div className="mt-10">
+          <Suspense fallback={<PropertyGridSkeleton count={siteConfig.featuredCount} />}>
+            <FeaturedProperties />
+          </Suspense>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+
+      <div className="mt-24 space-y-24 sm:mt-32 sm:space-y-32">
+        <WhyUs />
+        <BuySellCTA />
+        <EligibilityCTA />
+        {realtor.testimonials.length ? (
+        <section aria-labelledby="testimonials-heading" className="container-page">
+          <SectionHeading
+            eyebrow="Client stories"
+            align="center"
+            title={<span id="testimonials-heading">What clients say about working with {realtor.firstName}</span>}
+          />
+          <div className="mt-12">
+            <Testimonials testimonials={realtor.testimonials} />
+          </div>
+        </section>
+        ) : null}
+        <RealtorProfile />
+      </div>
+    </>
   );
 }

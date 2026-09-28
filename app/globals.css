@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design tokens. Rebrand by editing these values — components only reference
+ * the semantic names (paper, ink, accent, …), never raw hex codes.
+ */
+@theme {
+  --color-paper: #f5f3ee;
+  --color-surface: #ffffff;
+  --color-sand: #ece6da;
+  --color-ink: #15171b;
+  --color-ink-soft: #3b3e45;
+  --color-muted: #676a72;
+  --color-line: #e3dfd6;
+  --color-accent: #2d5a4c;
+  --color-accent-strong: #234a3e;
+  --color-accent-soft: #e2ece6;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-success: #1f7a4d;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+
+  --shadow-card: 0 1px 2px rgb(21 23 27 / 0.04), 0 8px 24px -12px rgb(21 23 27 / 0.12);
+  --shadow-float: 0 2px 4px rgb(21 23 27 / 0.04), 0 24px 48px -20px rgb(21 23 27 / 0.28);
+
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility eyebrow {
+  @apply text-xs font-semibold tracking-[0.14em] text-accent uppercase;
+}
+
+@utility btn {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold whitespace-nowrap transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primary {
+  @apply btn bg-ink text-white hover:bg-ink-soft;
+}
+@utility btn-accent {
+  @apply btn bg-accent text-white hover:bg-accent-strong;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-surface text-ink hover:border-ink/30 hover:bg-paper;
+}
+@utility btn-ghost {
+  @apply btn text-ink hover:bg-ink/5;
+}
+@utility btn-light {
+  @apply btn bg-white text-ink hover:bg-white/90;
+}
+
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)];
+}
+
+@utility field-label {
+  @apply mb-1.5 block text-sm font-medium text-ink;
+}
+@utility field-input {
+  @apply block min-h-12 w-full rounded-xl border border-line bg-surface px-4 text-base text-ink placeholder:text-muted/80 transition-colors outline-none hover:border-ink/25 focus:border-accent focus:ring-4 focus:ring-accent/15 aria-invalid:border-danger aria-invalid:ring-danger/10 sm:text-sm;
+}
+@utility field-error {
+  @apply mt-1.5 text-sm text-danger;
+}
+@utility field-hint {
+  @apply mt-1.5 text-xs text-muted;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
